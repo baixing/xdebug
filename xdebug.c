@@ -95,11 +95,6 @@ zend_function_entry xdebug_functions[] = {
 	PHP_FE(xdebug_get_function_stack,    NULL)
 	PHP_FE(xdebug_get_formatted_function_stack,    NULL)
 	PHP_FE(xdebug_print_function_stack,  NULL)
-	PHP_FE(xdebug_get_declared_vars,     NULL)
-	PHP_FE(xdebug_call_class,            NULL)
-	PHP_FE(xdebug_call_function,         NULL)
-	PHP_FE(xdebug_call_file,             NULL)
-	PHP_FE(xdebug_call_line,             NULL)
 
 	PHP_FE(xdebug_var_dump,              NULL)
 	PHP_FE(xdebug_debug_zval,            NULL)
@@ -110,31 +105,8 @@ zend_function_entry xdebug_functions[] = {
 	PHP_FE(xdebug_is_enabled,            NULL)
 	PHP_FE(xdebug_break,                 NULL)
 
-	PHP_FE(xdebug_start_trace,           NULL)
-	PHP_FE(xdebug_stop_trace,            NULL)
-	PHP_FE(xdebug_get_tracefile_name,    NULL)
-
-	PHP_FE(xdebug_get_profiler_filename, NULL)
-	PHP_FE(xdebug_dump_aggr_profiling_data, NULL)
-	PHP_FE(xdebug_clear_aggr_profiling_data, NULL)
-
-#if HAVE_PHP_MEMORY_USAGE
-	PHP_FE(xdebug_memory_usage,          NULL)
-	PHP_FE(xdebug_peak_memory_usage,     NULL)
-#endif
 	PHP_FE(xdebug_time_index,            NULL)
 
-	PHP_FE(xdebug_start_error_collection, NULL)
-	PHP_FE(xdebug_stop_error_collection, NULL)
-	PHP_FE(xdebug_get_collected_errors,  NULL)
-
-	PHP_FE(xdebug_start_code_coverage,   NULL)
-	PHP_FE(xdebug_stop_code_coverage,    NULL)
-	PHP_FE(xdebug_get_code_coverage,     NULL)
-	PHP_FE(xdebug_get_function_count,    NULL)
-
-	PHP_FE(xdebug_dump_superglobals,     NULL)
-	PHP_FE(xdebug_get_headers,           NULL)
 	{NULL, NULL, NULL}
 };
 
@@ -576,89 +548,6 @@ PHP_MINIT_FUNCTION(xdebug)
 
 	/* Overload the "exit" opcode */
 	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(exit, ZEND_EXIT);
-
-	/* Overload opcodes for code coverage */
-	if (XG(coverage_enable)) {
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_JMP);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_JMPZ);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_JMPZ_EX);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_JMPNZ);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_IS_IDENTICAL);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_IS_NOT_IDENTICAL);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_IS_EQUAL);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_IS_NOT_EQUAL);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_IS_SMALLER);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_IS_SMALLER_OR_EQUAL);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_BOOL_NOT);
-
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_ADD);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_SUB);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_MUL);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_DIV);
-
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_ADD_ARRAY_ELEMENT);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_RETURN);
-#if PHP_VERSION_ID >= 50400
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_RETURN_BY_REF);
-#endif
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_EXT_STMT);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_RAISE_ABSTRACT_ERROR);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_SEND_VAR);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_SEND_VAR_NO_REF);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_SEND_VAL);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_NEW);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_EXT_FCALL_BEGIN);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_CATCH);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_BOOL);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_ADD_CHAR);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_ADD_STRING);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_INIT_ARRAY);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_FETCH_DIM_R);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_FETCH_OBJ_R);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_FETCH_OBJ_W);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_FETCH_OBJ_FUNC_ARG);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_FETCH_DIM_FUNC_ARG);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_FETCH_DIM_UNSET);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_FETCH_OBJ_UNSET);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_FETCH_CLASS);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_FETCH_CONSTANT);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_CONCAT);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_ISSET_ISEMPTY_DIM_OBJ);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_PRE_INC_OBJ);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_SWITCH_FREE);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_QM_ASSIGN);
-#if (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3) || PHP_MAJOR_VERSION >= 6
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_DECLARE_LAMBDA_FUNCTION);
-#endif
-#if (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 4)
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_ADD_TRAIT);
-		XDEBUG_SET_OPCODE_OVERRIDE_COMMON(ZEND_BIND_TRAITS);
-#endif
-	}
-
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(include_or_eval, ZEND_INCLUDE_OR_EVAL);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign, ZEND_ASSIGN);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign_add, ZEND_ASSIGN_ADD);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign_sub, ZEND_ASSIGN_SUB);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign_mul, ZEND_ASSIGN_MUL);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign_div, ZEND_ASSIGN_DIV);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign_mod, ZEND_ASSIGN_MOD);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign_sl, ZEND_ASSIGN_SL);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign_sr, ZEND_ASSIGN_SR);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign_concat, ZEND_ASSIGN_CONCAT);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign_bw_or, ZEND_ASSIGN_BW_OR);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign_bw_and, ZEND_ASSIGN_BW_AND);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign_bw_xor, ZEND_ASSIGN_BW_XOR);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign_dim, ZEND_ASSIGN_DIM);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(assign_obj, ZEND_ASSIGN_OBJ);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(pre_inc, ZEND_PRE_INC);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(post_inc, ZEND_POST_INC);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(pre_dec, ZEND_PRE_DEC);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(post_dec, ZEND_POST_DEC);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(pre_inc_obj, ZEND_PRE_INC_OBJ);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(post_inc_obj, ZEND_POST_INC_OBJ);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(pre_dec_obj, ZEND_PRE_DEC_OBJ);
-	XDEBUG_SET_OPCODE_OVERRIDE_ASSIGN(post_dec_obj, ZEND_POST_DEC_OBJ);
 
 	zend_set_user_opcode_handler(ZEND_BEGIN_SILENCE, xdebug_silence_handler);
 	zend_set_user_opcode_handler(ZEND_END_SILENCE, xdebug_silence_handler);
@@ -1744,110 +1633,6 @@ PHP_FUNCTION(xdebug_break)
 	XG(context).do_break = 1;
 	RETURN_TRUE;
 }
-
-PHP_FUNCTION(xdebug_start_error_collection)
-{
-	if (XG(do_collect_errors) == 1) {
-		php_error(E_NOTICE, "Error collection was already started");
-	}
-	XG(do_collect_errors) = 1;
-}
-
-PHP_FUNCTION(xdebug_stop_error_collection)
-{
-	if (XG(do_collect_errors) == 0) {
-		php_error(E_NOTICE, "Error collection was not started");
-	}
-	XG(do_collect_errors) = 0;
-}
-
-PHP_FUNCTION(xdebug_get_collected_errors)
-{
-	xdebug_llist_element *le;
-	char                 *string;
-	zend_bool             clear = 0;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &clear) == FAILURE) {
-		return;
-	}
-
-	array_init(return_value);
-	for (le = XDEBUG_LLIST_HEAD(XG(collected_errors)); le != NULL; le = XDEBUG_LLIST_NEXT(le))	{
-		string = XDEBUG_LLIST_VALP(le);
-		add_next_index_string(return_value, string, 1);
-	}
-
-	if (clear) {
-		xdebug_llist_destroy(XG(collected_errors), NULL);
-		XG(collected_errors) = xdebug_llist_alloc(xdebug_llist_string_dtor);
-	}
-}
-
-PHP_FUNCTION(xdebug_get_headers)
-{
-	xdebug_llist_element *le;
-	char                 *string;
-
-	array_init(return_value);
-	for (le = XDEBUG_LLIST_HEAD(XG(headers)); le != NULL; le = XDEBUG_LLIST_NEXT(le)) {
-		string = XDEBUG_LLIST_VALP(le);
-		add_next_index_string(return_value, string, 1);
-	}
-	xdebug_llist_empty(XG(headers), NULL);
-}
-
-
-PHP_FUNCTION(xdebug_get_profiler_filename)
-{
-	if (XG(profile_filename)) {
-		RETURN_STRING(XG(profile_filename), 1);
-	} else {
-		RETURN_FALSE;
-	}
-}
-
-PHP_FUNCTION(xdebug_dump_aggr_profiling_data)
-{
-	char *prefix = NULL;
-	int prefix_len;
-
-	if (!XG(profiler_aggregate)) {
-		RETURN_FALSE;
-	}
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s", &prefix, &prefix_len) == FAILURE) {
-		return;
-	}
-
-	if (xdebug_profiler_output_aggr_data(prefix TSRMLS_CC) == SUCCESS) {
-		RETURN_TRUE;
-	} else {
-		RETURN_FALSE;
-	}
-}
-
-PHP_FUNCTION(xdebug_clear_aggr_profiling_data)
-{
-	if (!XG(profiler_aggregate)) {
-		RETURN_FALSE;
-	}
-
-	zend_hash_clean(&XG(aggr_calls));
-
-	RETURN_TRUE;
-}
-
-#if HAVE_PHP_MEMORY_USAGE
-PHP_FUNCTION(xdebug_memory_usage)
-{
-	RETURN_LONG(XG_MEMORY_USAGE());
-}
-
-PHP_FUNCTION(xdebug_peak_memory_usage)
-{
-	RETURN_LONG(XG_MEMORY_PEAK_USAGE());
-}
-#endif
 
 PHP_FUNCTION(xdebug_time_index)
 {
