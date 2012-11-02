@@ -199,6 +199,8 @@ static PHP_INI_MH(OnUpdateDebugMode)
 
 PHP_INI_BEGIN()
 	/* Debugger settings */
+	STD_PHP_INI_ENTRY("xdebug.haojing",      "0",                  PHP_INI_ALL,    OnUpdateLong,   haojing,      zend_xdebug_globals, xdebug_globals)
+
 	STD_PHP_INI_BOOLEAN("xdebug.auto_trace",      "0",                  PHP_INI_ALL,    OnUpdateBool,   auto_trace,        zend_xdebug_globals, xdebug_globals)
 	STD_PHP_INI_BOOLEAN("xdebug.trace_enable_trigger", "0",             PHP_INI_SYSTEM|PHP_INI_PERDIR, OnUpdateBool,   trace_enable_trigger, zend_xdebug_globals, xdebug_globals)
 	STD_PHP_INI_ENTRY("xdebug.trace_output_dir",  XDEBUG_TEMP_DIR,      PHP_INI_ALL,    OnUpdateString, trace_output_dir,  zend_xdebug_globals, xdebug_globals)
@@ -278,7 +280,7 @@ static void php_xdebug_init_globals (zend_xdebug_globals *xg TSRMLS_DC)
 	xg->output_is_tty        = OUTPUT_NOT_CHECKED;
 	xg->stdout_mode          = 0;
 	xg->in_at                = 0;
-
+	xg->haojing				 = 0;
 	xdebug_llist_init(&xg->server, xdebug_superglobals_dump_dtor);
 	xdebug_llist_init(&xg->get, xdebug_superglobals_dump_dtor);
 	xdebug_llist_init(&xg->post, xdebug_superglobals_dump_dtor);
@@ -556,7 +558,6 @@ PHP_MINIT_FUNCTION(xdebug)
 		zend_error(E_WARNING, "Xdebug MUST be loaded as a Zend extension");
 	}
 
-	REGISTER_LONG_CONSTANT("HAOJING_DEBUG_VERSION", 10000, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("XDEBUG_TRACE_APPEND", XDEBUG_TRACE_OPTION_APPEND, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("XDEBUG_TRACE_COMPUTERIZED", XDEBUG_TRACE_OPTION_COMPUTERIZED, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("XDEBUG_TRACE_HTML", XDEBUG_TRACE_OPTION_HTML, CONST_CS | CONST_PERSISTENT);
